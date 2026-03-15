@@ -383,6 +383,7 @@ function start3DGallery(){
   const bw=new THREE.Mesh(bG,wM.clone());bw.position.set(0,rH/2,-hLen+5);scene3d.add(bw);
   const fw=new THREE.Mesh(bG,wM.clone());fw.position.set(0,rH/2,5);fw.rotation.y=Math.PI;scene3d.add(fw);
   const loader=new THREE.TextureLoader();
+  loader.setCrossOrigin('anonymous');
   artworks.forEach((art,i)=>{
     const side=i%2===0?-1:1;const z=-i*1.8;const x=side*(rW/2-0.05);
     const sl=new THREE.SpotLight(0xfff0d0,0.7,7,Math.PI/6,0.5);
