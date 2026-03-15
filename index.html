@@ -380,7 +380,7 @@ function start3DGallery(){
   const lw=new THREE.Mesh(lwG,wM);lw.position.set(-rW/2,rH/2,-hLen/2+5);lw.rotation.y=Math.PI/2;scene3d.add(lw);
   const rw=new THREE.Mesh(lwG,wM.clone());rw.position.set(rW/2,rH/2,-hLen/2+5);rw.rotation.y=-Math.PI/2;scene3d.add(rw);
   const bG=new THREE.PlaneGeometry(rW,rH);
-  scene3d.add(Object.assign(new THREE.Mesh(bG,wM.clone()),{position:new THREE.Vector3(0,rH/2,-hLen+5)}));
+  const bw=new THREE.Mesh(bG,wM.clone());bw.position.set(0,rH/2,-hLen+5);scene3d.add(bw);
   const fw=new THREE.Mesh(bG,wM.clone());fw.position.set(0,rH/2,5);fw.rotation.y=Math.PI;scene3d.add(fw);
   const loader=new THREE.TextureLoader();
   artworks.forEach((art,i)=>{
