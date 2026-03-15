@@ -395,7 +395,7 @@ function start3DGallery(){
     const pM=new THREE.MeshStandardMaterial({color:0x888,roughness:0.8});
     const pm=new THREE.Mesh(new THREE.PlaneGeometry(fW,fH),pM);
     pm.position.set(x-(side*0.07),1.8,z);pm.rotation.y=side===1?-Math.PI/2:Math.PI/2;scene3d.add(pm);
-    loader.load(art.img,t=>{t.minFilter=THREE.LinearFilter;pM.map=t;pM.color.set(0xffffff);pM.needsUpdate=true});
+    const im=new Image();im.crossOrigin='anonymous';im.referrerPolicy='no-referrer';im.onload=function(){const t=new THREE.Texture(im);t.needsUpdate=true;t.minFilter=THREE.LinearFilter;pM.map=t;pM.color.set(0xffffff);pM.needsUpdate=true};im.src=art.img;
     const pc=document.createElement('canvas');pc.width=256;pc.height=40;const cx=pc.getContext('2d');
     cx.fillStyle='#1a1410';cx.fillRect(0,0,256,40);cx.fillStyle='#c9a84c';cx.font='bold 12px serif';cx.textAlign='center';
     cx.fillText(art.title,128,16);cx.font='italic 10px serif';cx.fillStyle='#bdb5a7';cx.fillText(art.artist,128,32);
