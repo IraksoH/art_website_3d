@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>Galleria — Maailman Mestariteokset</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--gold:#c9a84c;--gold-light:#e8d598;--gold-dark:#8a6d2b;--cream:#f5f0e8;--cream-dim:#bdb5a7;--text:#e8e2d6;--text-dim:#8a8478;--wine:#6b2d3e;--wine-light:#8a3d52}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',serif;overflow-x:hidden}
+.nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:1.2rem 2rem;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(10,10,10,0.95),transparent);transition:all 0.4s}
+.nav.scrolled{background:rgba(10,10,10,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,168,76,0.08)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold);letter-spacing:0.3em;font-weight:700}
+.nav-links{display:flex;gap:2rem}
+.nav-links a{color:var(--cream-dim);text-decoration:none;font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;transition:color 0.3s;cursor:pointer}
+.nav-links a:hover{color:var(--gold)}
+@media(max-width:700px){.nav-links{gap:1rem}.nav-links a{font-size:0.65rem;letter-spacing:0.1em}}
+
+/* HERO */
+.hero{position:relative;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(201,168,76,0.06) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 20% 80%,rgba(107,45,62,0.08) 0%,transparent 60%)}
+.hero-content{position:relative;z-index:3}
+.hero-sub{font-size:0.85rem;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold);opacity:0;animation:fadeUp 1.2s 0.3s forwards;margin-bottom:1.5rem}
+.hero h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(3rem,8vw,7rem);line-height:0.95;color:var(--cream);letter-spacing:-0.02em;opacity:0;animation:fadeUp 1.2s 0.6s forwards}
+.hero h1 em{font-style:italic;font-weight:400;color:var(--gold);font-family:'Bodoni Moda',serif}
+.hero-desc{font-size:1.15rem;color:var(--cream-dim);max-width:520px;margin:2rem auto 0;line-height:1.7;font-weight:300;opacity:0;animation:fadeUp 1.2s 0.9s forwards}
+.scroll-hint{position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:0.5rem;opacity:0;animation:fadeUp 1.2s 1.5s forwards}
+.scroll-hint span{font-size:0.7rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--text-dim)}
+.scroll-line{width:1px;height:40px;background:var(--gold);opacity:0.5;animation:scrollPulse 2s infinite}
+@keyframes scrollPulse{0%,100%{transform:scaleY(1);opacity:0.5}50%{transform:scaleY(0.4);opacity:0.2}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* TIMELINE */
+.timeline-section{position:relative}
+.timeline-scroll{position:relative}
+.timeline-fixed{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.timeline-bg{position:absolute;inset:0;transition:background 1.5s ease}
+.timeline-year-bg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Bodoni Moda',serif;font-size:clamp(6rem,20vw,16rem);color:rgba(201,168,76,0.04);font-weight:700;pointer-events:none;z-index:1;white-space:nowrap;transition:opacity 0.3s}
+.timeline-era{position:absolute;top:3.5rem;left:50%;transform:translateX(-50%);z-index:10;text-align:center}
+.timeline-era-label{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold);font-weight:700}
+.timeline-era-years{font-size:0.7rem;letter-spacing:0.2em;color:var(--text-dim);margin-top:0.2rem}
+.timeline-progress{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:1rem;width:min(85%,650px)}
+.timeline-progress-bar{flex:1;height:1px;background:rgba(201,168,76,0.15);position:relative;overflow:hidden}
+.timeline-progress-fill{height:100%;background:var(--gold);width:0%;transition:width 0.05s linear}
+.timeline-progress-year{font-family:'Bodoni Moda',serif;font-size:0.85rem;color:var(--gold);min-width:3rem;text-align:right}
+.timeline-counter{position:absolute;top:50%;right:2rem;transform:translateY(-50%);z-index:10;text-align:right}
+.timeline-counter .tc-num{font-family:'Bodoni Moda',serif;font-size:0.8rem;color:var(--gold)}
+.timeline-counter .tc-of{font-size:0.7rem;color:var(--text-dim)}
+
+.tl-card{position:absolute;z-index:5;display:flex;gap:2rem;align-items:center;max-width:880px;width:88%;left:50%;top:50%;transform:translate(-50%,-50%) translateY(60px) scale(0.95);opacity:0;transition:all 0.7s cubic-bezier(0.16,1,0.3,1);pointer-events:none;cursor:pointer}
+.tl-card.visible{opacity:1;transform:translate(-50%,-50%) translateY(0) scale(1);pointer-events:auto}
+.tl-card.exit-up{opacity:0;transform:translate(-50%,-50%) translateY(-50px) scale(0.97)}
+.tl-card-img{width:260px;height:320px;flex-shrink:0;overflow:hidden;border:1px solid rgba(201,168,76,0.15);box-shadow:0 20px 80px rgba(0,0,0,0.6);background:var(--bg2)}
+.tl-card-img img{width:100%;height:100%;object-fit:cover;transition:transform 1s}
+.tl-card:hover .tl-card-img img{transform:scale(1.05)}
+.tl-card-info{flex:1}
+.tl-card-info .tl-year{font-family:'Bodoni Moda',serif;font-size:2.2rem;color:var(--gold);line-height:1;margin-bottom:0.4rem}
+.tl-card-info h3{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--cream);font-weight:700;line-height:1.2;margin-bottom:0.2rem}
+.tl-card-info .tl-artist{color:var(--gold-light);font-style:italic;font-size:1.05rem;margin-bottom:0.6rem}
+.tl-card-info .tl-style-badge{display:inline-block;padding:0.25rem 0.7rem;border:1px solid rgba(201,168,76,0.3);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem}
+.tl-card-info .tl-desc{color:var(--cream-dim);font-size:0.9rem;line-height:1.6;font-weight:300}
+.tl-card-info .tl-location{margin-top:0.5rem;font-size:0.8rem;color:var(--text-dim);display:flex;align-items:center;gap:0.3rem}
+.tl-card-info .tl-location svg{width:13px;height:13px;fill:var(--gold-dark)}
+.tl-click-hint{margin-top:0.7rem;font-size:0.7rem;color:var(--gold-dark);letter-spacing:0.1em;text-transform:uppercase}
+@media(max-width:800px){.tl-card{flex-direction:column;gap:1rem;text-align:center}.tl-card-img{width:180px;height:240px}.tl-card-info .tl-year{font-size:1.6rem}.tl-card-info h3{font-size:1.1rem}}
+
+/* 3D GALLERY */
+.gallery3d-intro{text-align:center;padding:6rem 2rem 3rem}
+.gallery3d-intro h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,3rem);color:var(--cream);font-weight:700}
+.gallery3d-intro p{color:var(--text-dim);font-size:1rem;margin-top:0.8rem;max-width:480px;margin-left:auto;margin-right:auto}
+.gallery3d-intro::after{content:'';display:block;width:60px;height:1px;background:var(--gold);margin:1.5rem auto 0}
+.gallery3d-wrap{position:relative;width:100%;height:80vh;max-height:700px;background:#000;border-top:1px solid rgba(201,168,76,0.1);border-bottom:1px solid rgba(201,168,76,0.1)}
+#gallery3d-canvas{width:100%;height:100%;display:block;cursor:crosshair}
+.gallery3d-controls{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);background:rgba(10,10,10,0.85);backdrop-filter:blur(10px);border:1px solid rgba(201,168,76,0.15);padding:0.5rem 1.2rem;display:flex;gap:1.2rem;align-items:center;font-size:0.7rem;color:var(--cream-dim);letter-spacing:0.1em;z-index:5}
+.gallery3d-controls kbd{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);padding:0.1rem 0.4rem;color:var(--gold);border-radius:2px;font-family:monospace;font-size:0.7rem}
+.gallery3d-enter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,10,10,0.75);backdrop-filter:blur(10px);z-index:10;cursor:pointer;transition:opacity 0.6s}
+.gallery3d-enter.hidden{opacity:0;pointer-events:none}
+.gallery3d-enter-btn{padding:1rem 3rem;border:1px solid var(--gold);background:transparent;color:var(--gold);font-family:'Playfair Display',serif;font-size:1.2rem;cursor:pointer;transition:all 0.4s;letter-spacing:0.1em}
+.gallery3d-enter-btn:hover{background:rgba(201,168,76,0.1);box-shadow:0 0 40px rgba(201,168,76,0.15)}
+.gallery3d-enter p{color:var(--text-dim);margin-top:1rem;font-size:0.85rem}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(5,5,5,0.92);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:2rem;opacity:0;transition:opacity 0.4s}
+.modal-overlay.open{display:flex;opacity:1}
+.modal{background:var(--bg2);border:1px solid rgba(201,168,76,0.15);max-width:1050px;width:100%;max-height:90vh;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;position:relative;animation:modalIn 0.5s cubic-bezier(0.16,1,0.3,1)}
+@media(max-width:800px){.modal{grid-template-columns:1fr;max-height:95vh}}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-close{position:absolute;top:1rem;right:1.2rem;z-index:10;background:none;border:none;color:var(--cream-dim);font-size:1.8rem;cursor:pointer;transition:color 0.3s;font-family:'Cormorant Garamond',serif}
+.modal-close:hover{color:var(--gold)}
+.modal-image{background:var(--bg);display:flex;align-items:center;justify-content:center;padding:1.5rem;position:relative;overflow:hidden;min-height:320px}
+.modal-image img{max-width:100%;max-height:58vh;object-fit:contain;position:relative;z-index:1;box-shadow:0 10px 60px rgba(0,0,0,0.5)}
+.modal-details{padding:2rem 1.8rem;display:flex;flex-direction:column;gap:1rem;overflow-y:auto}
+.modal-details h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--cream);font-weight:700;line-height:1.2}
+.modal-artist{font-size:1.05rem;color:var(--gold);font-style:italic}
+.modal-meta{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem}
+.meta-item{padding:0.7rem;background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.08)}
+.meta-item .label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.2rem}
+.meta-item .value{font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--cream)}
+.modal-description{color:var(--cream-dim);line-height:1.7;font-size:0.9rem;font-weight:300;border-top:1px solid rgba(201,168,76,0.1);padding-top:0.8rem}
+.modal-map-title{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.3rem}
+.modal-map{width:100%;height:140px;border:1px solid rgba(201,168,76,0.15);filter:grayscale(0.6) brightness(0.7);transition:filter 0.4s}
+.modal-map:hover{filter:grayscale(0.2) brightness(0.8)}
+.modal-location{display:flex;align-items:center;gap:0.4rem;color:var(--gold-light);font-size:0.85rem;margin-top:0.2rem}
+.modal-location svg{width:13px;height:13px;fill:var(--gold)}
+.trip-btn{width:100%;padding:0.8rem 1rem;margin-top:0.2rem;background:linear-gradient(135deg,var(--wine),var(--wine-light));border:1px solid rgba(201,168,76,0.25);color:var(--gold-light);font-family:'Playfair Display',serif;font-size:0.9rem;cursor:pointer;transition:all 0.4s;display:flex;align-items:center;justify-content:center;gap:0.6rem;overflow:hidden;position:relative}
+.trip-btn:hover{border-color:var(--gold);box-shadow:0 4px 30px rgba(201,168,76,0.15);transform:translateY(-1px)}
+.trip-btn svg{width:16px;height:16px;fill:var(--gold-light);flex-shrink:0}
+.trip-panel{display:none;margin-top:0.6rem;animation:tripIn 0.5s cubic-bezier(0.16,1,0.3,1)}
+.trip-panel.open{display:block}
+@keyframes tripIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.trip-header{display:flex;align-items:center;gap:0.6rem;padding-bottom:0.6rem;border-bottom:1px solid rgba(201,168,76,0.12);margin-bottom:0.8rem}
+.trip-route{display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap}
+.trip-city{font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--cream)}
+.trip-arrow{color:var(--gold);font-size:1rem}
+.trip-flag{font-size:1.1rem}
+.trip-cards{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.8rem}
+@media(max-width:500px){.trip-cards{grid-template-columns:1fr}}
+.trip-card{padding:0.6rem;background:rgba(201,168,76,0.03);border:1px solid rgba(201,168,76,0.1)}
+.trip-card-icon{font-size:1.1rem;margin-bottom:0.2rem}
+.trip-card .tc-label{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.15rem}
+.trip-card .tc-value{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light)}
+.trip-card .tc-note{font-size:0.7rem;color:var(--cream-dim);margin-top:0.1rem;line-height:1.3}
+.trip-total{padding:0.8rem;background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(107,45,62,0.08));border:1px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;flex-wrap:wrap;gap:0.3rem}
+.trip-total-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim)}
+.trip-total-price{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);font-weight:700}
+.trip-total-note{width:100%;font-size:0.65rem;color:var(--text-dim);font-style:italic}
+.trip-duration{display:flex;align-items:center;gap:0.4rem;padding:0.5rem 0.7rem;margin-bottom:0.6rem;background:rgba(255,255,255,0.02);border-left:2px solid var(--gold)}
+.trip-duration svg{width:13px;height:13px;fill:var(--gold);flex-shrink:0}
+.trip-duration span{color:var(--cream-dim);font-size:0.8rem}
+.trip-links{display:flex;gap:0.4rem;flex-wrap:wrap}
+.trip-link{flex:1;min-width:90px;padding:0.5rem 0.6rem;text-align:center;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);color:var(--gold-light);font-family:'Cormorant Garamond',serif;font-size:0.75rem;text-decoration:none;transition:all 0.3s;cursor:pointer}
+.trip-link:hover{background:rgba(201,168,76,0.12);border-color:var(--gold);color:var(--cream);transform:translateY(-1px)}
+.trip-link-primary{background:linear-gradient(135deg,var(--wine),var(--wine-light));border-color:rgba(201,168,76,0.3)}
+
+footer{text-align:center;padding:4rem 2rem;border-top:1px solid rgba(201,168,76,0.08);color:var(--text-dim);font-size:0.85rem;letter-spacing:0.1em}
+footer span{color:var(--gold)}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:3px}
+</style>
+</head>
+<body>
+<nav class="nav" id="nav">
+  <div class="nav-logo">GALLERIA</div>
+  <div class="nav-links">
+    <a onclick="document.getElementById('timelineSection').scrollIntoView({behavior:'smooth'})">Aikajana</a>
+    <a onclick="document.getElementById('gallery3d').scrollIntoView({behavior:'smooth'})">3D Museo</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-sub">600 vuotta taiteen historiaa</p>
+    <h1>G A L L E R I A<br><em>Aikamatkalla</em></h1>
+    <p class="hero-desc">Scrollaa läpi vuosisatojen ja koe 30 mestariteosta kronologisena matkana renessanssista modernismiin.</p>
+  </div>
+  <div class="scroll-hint"><span>Aloita matka</span><div class="scroll-line"></div></div>
+</section>
+
+<section class="timeline-section" id="timelineSection">
+  <div class="timeline-scroll" id="timelineScroll">
+    <div class="timeline-fixed" id="timelineFixed">
+      <div class="timeline-bg" id="timelineBg"></div>
+      <div class="timeline-year-bg" id="timelineYearBg">1434</div>
+      <div class="timeline-era"><div class="timeline-era-label" id="eraLabel">Renessanssi</div><div class="timeline-era-years" id="eraYears">1400–1600</div></div>
+      <div class="timeline-counter"><div class="tc-num" id="tcNum">1 / 30</div></div>
+      <div class="timeline-progress"><div class="timeline-progress-bar"><div class="timeline-progress-fill" id="progressFill"></div></div><div class="timeline-progress-year" id="progressYear">1434</div></div>
+      <div id="timelineCards"></div>
+    </div>
+  </div>
+</section>
+
+<section id="gallery3d">
+  <div class="gallery3d-intro"><h2>Virtuaalinen Museo</h2><p>Kävele museon käytävillä ja ihaile mestariteoksia seinillä</p></div>
+  <div class="gallery3d-wrap" id="gallery3dWrap">
+    <canvas id="gallery3d-canvas"></canvas>
+    <div class="gallery3d-enter" id="gallery3dEnter" onclick="start3DGallery()">
+      <button class="gallery3d-enter-btn">Astu sisään museoon</button>
+      <p>Klikkaa ja käytä WASD + hiirtä liikkumiseen</p>
+    </div>
+    <div class="gallery3d-controls"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Liiku</span><span><kbd>Hiiri</kbd> Katso</span><span><kbd>ESC</kbd> Poistu</span></div>
+  </div>
+</section>
+
+<footer><p><span>GALLERIA</span> — Virtuaalinen taidemuseo &copy; 2026</p></footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal"><button class="modal-close" id="modalClose">&times;</button>
+    <div class="modal-image"><img id="modalImg" src="" alt=""></div>
+    <div class="modal-details">
+      <div><h2 id="modalTitle"></h2><p class="modal-artist" id="modalArtist"></p></div>
+      <div class="modal-meta">
+        <div class="meta-item"><div class="label">Vuosiluku</div><div class="value" id="modalYear"></div></div>
+        <div class="meta-item"><div class="label">Taidetyyli</div><div class="value" id="modalStyle"></div></div>
+        <div class="meta-item"><div class="label">Arvioitu arvo</div><div class="value" id="modalValue"></div></div>
+        <div class="meta-item"><div class="label">Tekniikka</div><div class="value" id="modalTechnique"></div></div>
+      </div>
+      <p class="modal-description" id="modalDesc"></p>
+      <div><p class="modal-map-title">Taideteoksen sijainti</p><iframe class="modal-map" id="modalMap" src="" frameborder="0" loading="lazy"></iframe><div class="modal-location"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg><span id="modalLocation"></span></div></div>
+      <button class="trip-btn" id="tripBtn" onclick="toggleTrip()"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg> Haluan nähdä tämän teoksen livenä!</button>
+      <div class="trip-panel" id="tripPanel">
+        <div class="trip-header"><div class="trip-route"><span class="trip-flag">🇫🇮</span><span class="trip-city">Helsinki</span><span class="trip-arrow">✈</span><span class="trip-city" id="tripDest"></span><span class="trip-flag" id="tripFlag"></span></div></div>
+        <div class="trip-duration"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg><span id="tripFlightTime"></span></div>
+        <div class="trip-cards">
+          <div class="trip-card"><div class="trip-card-icon">✈️</div><div class="tc-label">Lennot (meno-paluu)</div><div class="tc-value" id="tripFlight"></div><div class="tc-note" id="tripAirport"></div></div>
+          <div class="trip-card"><div class="trip-card-icon">🏨</div><div class="tc-label">Hotelli (2 yötä)</div><div class="tc-value" id="tripHotel"></div><div class="tc-note" id="tripHotelNote"></div></div>
+          <div class="trip-card"><div class="trip-card-icon">🎟️</div><div class="tc-label">Museon pääsylippu</div><div class="tc-value" id="tripTicket"></div><div class="tc-note" id="tripMuseum"></div></div>
+          <div class="trip-card"><div class="trip-card-icon">🍽️</div><div class="tc-label">Ruoka & liikkuminen</div><div class="tc-value" id="tripFood"></div><div class="tc-note">Arvio 2 päivälle</div></div>
+        </div>
+        <div class="trip-total"><div><div class="trip-total-label">Arvioitu kokonaisbudjetti</div><div class="trip-total-price" id="tripTotal"></div></div><div class="trip-total-note">* Hinnat ovat arvioita Helsingistä.</div></div>
+        <div class="trip-links">
+          <a class="trip-link trip-link-primary" id="tripFlightLink" href="" target="_blank" rel="noopener">🔍 Lennot</a>
+          <a class="trip-link" id="tripHotelLink" href="" target="_blank" rel="noopener">🏨 Hotellit</a>
+          <a class="trip-link" id="tripMuseumLink" href="" target="_blank" rel="noopener">🎟️ Museo</a>
+          <a class="trip-link" id="tripMapLink" href="" target="_blank" rel="noopener">🗺️ Reitti</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const artworks=[
+{title:"Arnolfinin muotokuva",artist:"Jan van Eyck",year:1434,yearStr:"1434",style:"Renessanssi",era:"Renessanssi",value:"Korvaamaton",technique:"Öljy tammipuulle",location:"National Gallery, Lontoo",lat:51.5089,lng:-0.1283,desc:"Varhaisen öljymaalauksen mestariteos, joka kuvaa kauppiasparia kotona.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Van_Eyck_-_Arnolfini_Portrait.jpg/800px-Van_Eyck_-_Arnolfini_Portrait.jpg",trip:{city:"Lontoo",flag:"🇬🇧",iata:"LHR",flightH:"3h",flightPrice:"90–220",hotel:"160–300",ticket:"0",ticketNote:"National Gallery — ilmainen!",food:"120–180",museumUrl:"https://www.nationalgallery.org.uk"}},
+{title:"Venuksen syntymä",artist:"Sandro Botticelli",year:1485,yearStr:"n. 1485",style:"Renessanssi",era:"Renessanssi",value:"Korvaamaton (500+ milj. $)",technique:"Tempera kankaalle",location:"Uffizi, Firenze",lat:43.7678,lng:11.2556,desc:"Venus nousee merestä simpukankuorella. Renessanssin kauneus­ihanteen ikoni.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/1280px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg",trip:{city:"Firenze",flag:"🇮🇹",iata:"FLR",flightH:"3h 45min",flightPrice:"150–310",hotel:"120–230",ticket:"25",ticketNote:"Uffizi — varaa liput etukäteen",food:"80–130",museumUrl:"https://www.uffizi.it"}},
+{title:"Viimeinen ehtoollinen",artist:"Leonardo da Vinci",year:1498,yearStr:"1495–1498",style:"Renessanssi",era:"Renessanssi",value:"Korvaamaton",technique:"Tempera ja öljy kipsille",location:"Santa Maria delle Grazie, Milano",lat:45.466,lng:9.1711,desc:"Dramaattinen hetki, jolloin Jeesus kertoo petoksesta. Maailman tutkituimpia maalauksia.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg/1280px-The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg",trip:{city:"Milano",flag:"🇮🇹",iata:"MXP",flightH:"3h 20min",flightPrice:"120–260",hotel:"110–220",ticket:"15",ticketNote:"Rajattu kävijämäärä — varaa 2+ kk",food:"80–130",museumUrl:"https://cenacolovinciano.org"}},
+{title:"Mona Lisa",artist:"Leonardo da Vinci",year:1506,yearStr:"1503–1519",style:"Renessanssi",era:"Renessanssi",value:"Korvaamaton (860+ milj. $)",technique:"Öljy poppelipuulle",location:"Louvre, Pariisi",lat:48.8606,lng:2.3376,desc:"Maailman tunnetuin maalaus. Salaperäinen hymy ja sfumato-tekniikka loivat taidehistorian ikonin.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",trip:{city:"Pariisi",flag:"🇫🇷",iata:"CDG",flightH:"3h 15min",flightPrice:"120–280",hotel:"140–250",ticket:"22",ticketNote:"Louvre — auki ma–su paitsi ti",food:"100–160",museumUrl:"https://www.louvre.fr"}},
+{title:"Ateenan koulu",artist:"Rafael",year:1511,yearStr:"1509–1511",style:"Renessanssi",era:"Renessanssi",value:"Korvaamaton",technique:"Freskotekniikka",location:"Vatikaanin museot",lat:41.9029,lng:12.4545,desc:"Antiikin filosofit kokoontuvat: Platon, Aristoteles, Sokrates. Humanismin huippu.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1280px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg",trip:{city:"Rooma",flag:"🇮🇹",iata:"FCO",flightH:"3h 30min",flightPrice:"130–290",hotel:"120–240",ticket:"17",ticketNote:"Vatikaanin museot — varaa etukäteen",food:"80–140",museumUrl:"https://www.museivaticani.va"}},
+{title:"Aadamin luominen",artist:"Michelangelo",year:1512,yearStr:"n. 1512",style:"Renessanssi",era:"Renessanssi",value:"Korvaamaton",technique:"Freskotekniikka",location:"Sikstuksen kappeli, Vatikaani",lat:41.9029,lng:12.4545,desc:"Jumalan ja Aadamin sormet kohtaavat. Ihmiskunnan luomisen ikoninen kuva.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/1280px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg",trip:{city:"Rooma",flag:"🇮🇹",iata:"FCO",flightH:"3h 30min",flightPrice:"130–290",hotel:"120–240",ticket:"17",ticketNote:"Vatikaanin museot — varaa etukäteen",food:"80–140",museumUrl:"https://www.museivaticani.va"}},
+{title:"Yövartio",artist:"Rembrandt van Rijn",year:1642,yearStr:"1642",style:"Barokki",era:"Barokki",value:"Korvaamaton (500+ milj. $)",technique:"Öljy kankaalle",location:"Rijksmuseum, Amsterdam",lat:52.36,lng:4.8852,desc:"Kansalaiskaarti liikkeessä. Rembrandtin dramaattisen valaistuksen mestarinäyte.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/The_Night_Watch_-_HD.jpg/1280px-The_Night_Watch_-_HD.jpg",trip:{city:"Amsterdam",flag:"🇳🇱",iata:"AMS",flightH:"2h 40min",flightPrice:"100–220",hotel:"140–260",ticket:"22.50",ticketNote:"Rijksmuseum — päivittäin 9–17",food:"100–150",museumUrl:"https://www.rijksmuseum.nl"}},
+{title:"Las Meninas",artist:"Diego Velázquez",year:1656,yearStr:"1656",style:"Barokki",era:"Barokki",value:"Korvaamaton",technique:"Öljy kankaalle",location:"Museo del Prado, Madrid",lat:40.4138,lng:-3.6921,desc:"Taiteilija maalaa kuningas­paria, prinsessa seurueineen katsoo katsojaa. Perspektiivin mestari.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg/800px-Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg",trip:{city:"Madrid",flag:"🇪🇸",iata:"MAD",flightH:"4h 30min",flightPrice:"140–300",hotel:"100–200",ticket:"15",ticketNote:"Prado — ilmainen klo 18–20",food:"70–120",museumUrl:"https://www.museodelprado.es"}},
+{title:"Maidon kaataja",artist:"Johannes Vermeer",year:1658,yearStr:"n. 1658",style:"Barokki",era:"Barokki",value:"Korvaamaton (200+ milj. $)",technique:"Öljy kankaalle",location:"Rijksmuseum, Amsterdam",lat:52.36,lng:4.8852,desc:"Nainen kaataa maitoa — arkinen hetki muuttuu juhlalliseksi Vermeerin valossa.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg/800px-Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg",trip:{city:"Amsterdam",flag:"🇳🇱",iata:"AMS",flightH:"2h 40min",flightPrice:"100–220",hotel:"140–260",ticket:"22.50",ticketNote:"Rijksmuseum — päivittäin 9–17",food:"100–150",museumUrl:"https://www.rijksmuseum.nl"}},
+{title:"Helmenkorvanainen tyttö",artist:"Johannes Vermeer",year:1665,yearStr:"n. 1665",style:"Barokki",era:"Barokki",value:"Korvaamaton (200+ milj. $)",technique:"Öljy kankaalle",location:"Mauritshuis, Haag",lat:52.0804,lng:4.3142,desc:"'Pohjoisen Mona Lisa'. Tyttö katselee olkansa yli, helmikoru hohtaa.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/800px-1665_Girl_with_a_Pearl_Earring.jpg",trip:{city:"Haag",flag:"🇳🇱",iata:"AMS",flightH:"2h 40min",flightPrice:"100–220",hotel:"120–220",ticket:"19",ticketNote:"Mauritshuis — ma–su 10–18",food:"90–140",museumUrl:"https://www.mauritshuis.nl"}},
+{title:"Vaeltaja sumumeren yllä",artist:"Caspar David Friedrich",year:1818,yearStr:"n. 1818",style:"Romantiikka",era:"Romantiikka",value:"Korvaamaton (100+ milj. $)",technique:"Öljy kankaalle",location:"Hamburger Kunsthalle, Hampuri",lat:53.5572,lng:10.0003,desc:"Mies seisoo kallion reunalla sumun peittämän maiseman yllä. Romantiikan symboli.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg/800px-Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg",trip:{city:"Hampuri",flag:"🇩🇪",iata:"HAM",flightH:"1h 50min",flightPrice:"80–180",hotel:"100–190",ticket:"16",ticketNote:"Kunsthalle — ti–su 10–18",food:"70–120",museumUrl:"https://www.hamburger-kunsthalle.de"}},
+{title:"Vapauden johtaja kansaa",artist:"Eugène Delacroix",year:1830,yearStr:"1830",style:"Romantiikka",era:"Romantiikka",value:"Korvaamaton",technique:"Öljy kankaalle",location:"Louvre, Pariisi",lat:48.8606,lng:2.3376,desc:"Vapauden henkilöitymä barrikadeilla. Heinäkuun vallankumouksen symboli.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Eug%C3%A8ne_Delacroix_-_Le_28_Juillet._La_Libert%C3%A9_guidant_le_peuple.jpg/1280px-Eug%C3%A8ne_Delacroix_-_Le_28_Juillet._La_Libert%C3%A9_guidant_le_peuple.jpg",trip:{city:"Pariisi",flag:"🇫🇷",iata:"CDG",flightH:"3h 15min",flightPrice:"120–280",hotel:"140–250",ticket:"22",ticketNote:"Louvre — auki ma–su paitsi ti",food:"100–160",museumUrl:"https://www.louvre.fr"}},
+{title:"Suuri aalto Kanagawan edustalla",artist:"Katsushika Hokusai",year:1831,yearStr:"n. 1831",style:"Ukiyo-e",era:"Romantiikka",value:"Arv. 2–3 milj. $ (tuloste)",technique:"Puupiirros",location:"Metropolitan Museum, New York",lat:40.7794,lng:-73.9632,desc:"Valtava aalto Fuji-vuoren edessä. Japanilaisen taiteen tunnetuin teos.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/1280px-Tsunami_by_hokusai_19th_century.jpg",trip:{city:"New York",flag:"🇺🇸",iata:"JFK",flightH:"9h 30min",flightPrice:"350–650",hotel:"200–400",ticket:"30",ticketNote:"The Met — suositeltu maksu",food:"150–250",museumUrl:"https://www.metmuseum.org"}},
+{title:"Olympia",artist:"Édouard Manet",year:1863,yearStr:"1863",style:"Realismi",era:"Impressionismi",value:"Korvaamaton",technique:"Öljy kankaalle",location:"Musée d'Orsay, Pariisi",lat:48.86,lng:2.3266,desc:"Rohkea naisen katse suoraan katsojaan haastoi aikansa tabut.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Edouard_Manet_-_Olympia_-_Google_Art_Project_3.jpg/1280px-Edouard_Manet_-_Olympia_-_Google_Art_Project_3.jpg",trip:{city:"Pariisi",flag:"🇫🇷",iata:"CDG",flightH:"3h 15min",flightPrice:"120–280",hotel:"140–250",ticket:"16",ticketNote:"Musée d'Orsay — ti–su 9:30–18",food:"100–160",museumUrl:"https://www.musee-orsay.fr"}},
+{title:"Impressio: Auringonnousu",artist:"Claude Monet",year:1872,yearStr:"1872",style:"Impressionismi",era:"Impressionismi",value:"Korvaamaton (300+ milj. $)",technique:"Öljy kankaalle",location:"Musée Marmottan, Pariisi",lat:48.8582,lng:2.2665,desc:"Teos, joka antoi nimen koko taidekaudelle. Le Havren satama sumuisena aamuna.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Monet_-_Impression%2C_Sunrise.jpg/1280px-Monet_-_Impression%2C_Sunrise.jpg",trip:{city:"Pariisi",flag:"🇫🇷",iata:"CDG",flightH:"3h 15min",flightPrice:"120–280",hotel:"140–250",ticket:"14",ticketNote:"Marmottan — ti–su 10–18",food:"100–160",museumUrl:"https://www.marmottan.fr"}},
+{title:"Tanssitunti",artist:"Edgar Degas",year:1874,yearStr:"1874",style:"Impressionismi",era:"Impressionismi",value:"Korvaamaton (100+ milj. $)",technique:"Öljy kankaalle",location:"Musée d'Orsay, Pariisi",lat:48.86,lng:2.3266,desc:"Balettitanssijat harjoittelevat ja odottavat. Arki muuttuu taiteeksi.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Edgar_Degas_-_The_Ballet_Class_-_Google_Art_Project.jpg/800px-Edgar_Degas_-_The_Ballet_Class_-_Google_Art_Project.jpg",trip:{city:"Pariisi",flag:"🇫🇷",iata:"CDG",flightH:"3h 15min",flightPrice:"120–280",hotel:"140–250",ticket:"16",ticketNote:"Musée d'Orsay — ti–su 9:30–18",food:"100–160",museumUrl:"https://www.musee-orsay.fr"}},
+{title:"Nainen auringonvarjolla",artist:"Claude Monet",year:1875,yearStr:"1875",style:"Impressionismi",era:"Impressionismi",value:"100+ milj. $",technique:"Öljy kankaalle",location:"National Gallery of Art, Washington",lat:38.8913,lng:-77.02,desc:"Monet'n vaimo ja poika kesäisellä kukkulalla. Valon ja tuulen täydellinen vangitseminen.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Claude_Monet_-_Woman_with_a_Parasol_-_Madame_Monet_and_Her_Son_-_Google_Art_Project.jpg/800px-Claude_Monet_-_Woman_with_a_Parasol_-_Madame_Monet_and_Her_Son_-_Google_Art_Project.jpg",trip:{city:"Washington D.C.",flag:"🇺🇸",iata:"IAD",flightH:"10h",flightPrice:"380–680",hotel:"180–340",ticket:"0",ticketNote:"National Gallery of Art — ilmainen!",food:"140–220",museumUrl:"https://www.nga.gov"}},
+{title:"Moulin de la Galetten tanssiaiset",artist:"Pierre-Auguste Renoir",year:1876,yearStr:"1876",style:"Impressionismi",era:"Impressionismi",value:"150+ milj. $",technique:"Öljy kankaalle",location:"Musée d'Orsay, Pariisi",lat:48.86,lng:2.3266,desc:"Montmartren puutarhajuhlien iloa. Pariisilaisen elämänilon mestari.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Pierre-Auguste_Renoir%2C_Le_Moulin_de_la_Galette.jpg/1280px-Pierre-Auguste_Renoir%2C_Le_Moulin_de_la_Galette.jpg",trip:{city:"Pariisi",flag:"🇫🇷",iata:"CDG",flightH:"3h 15min",flightPrice:"120–280",hotel:"140–250",ticket:"16",ticketNote:"Musée d'Orsay — ti–su 9:30–18",food:"100–160",museumUrl:"https://www.musee-orsay.fr"}},
+{title:"Pariisin katu, sateinen päivä",artist:"Gustave Caillebotte",year:1877,yearStr:"1877",style:"Impressionismi",era:"Impressionismi",value:"Korvaamaton",technique:"Öljy kankaalle",location:"Art Institute, Chicago",lat:41.8796,lng:-87.6237,desc:"Haussmannin Pariisi sateella. Caillebotten urbaani eleganssi.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Gustave_Caillebotte_-_Paris_Street%3B_Rainy_Day_-_Google_Art_Project.jpg/1280px-Gustave_Caillebotte_-_Paris_Street%3B_Rainy_Day_-_Google_Art_Project.jpg",trip:{city:"Chicago",flag:"🇺🇸",iata:"ORD",flightH:"10h 15min",flightPrice:"380–700",hotel:"180–350",ticket:"25–35",ticketNote:"Art Institute of Chicago",food:"140–220",museumUrl:"https://www.artic.edu"}},
+{title:"Auringonkukat",artist:"Vincent van Gogh",year:1888,yearStr:"1888",style:"Jälki-impressionismi",era:"Jälki-impressionismi",value:"100+ milj. $",technique:"Öljy kankaalle",location:"National Gallery, Lontoo",lat:51.5089,lng:-0.1283,desc:"Kirkkaat auringonkukat maljakossa — osa sarjaa ystävälle Gauguinille.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Vincent_Willem_van_Gogh_127.jpg/800px-Vincent_Willem_van_Gogh_127.jpg",trip:{city:"Lontoo",flag:"🇬🇧",iata:"LHR",flightH:"3h",flightPrice:"90–220",hotel:"160–300",ticket:"0",ticketNote:"National Gallery — ilmainen!",food:"120–180",museumUrl:"https://www.nationalgallery.org.uk"}},
+{title:"Tähtitaivas Rhônen yllä",artist:"Vincent van Gogh",year:1888,yearStr:"1888",style:"Jälki-impressionismi",era:"Jälki-impressionismi",value:"Korvaamaton (200+ milj. $)",technique:"Öljy kankaalle",location:"Musée d'Orsay, Pariisi",lat:48.86,lng:2.3266,desc:"Arles'n yötaivas heijastuu joesta. Van Gogh maalasi ulkona gaslyhtyjen valossa.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Starry_Night_Over_the_Rhone.jpg/1280px-Starry_Night_Over_the_Rhone.jpg",trip:{city:"Pariisi",flag:"🇫🇷",iata:"CDG",flightH:"3h 15min",flightPrice:"120–280",hotel:"140–250",ticket:"16",ticketNote:"Musée d'Orsay — ti–su 9:30–18",food:"100–160",museumUrl:"https://www.musee-orsay.fr"}},
+{title:"Tähtitaivas",artist:"Vincent van Gogh",year:1889,yearStr:"1889",style:"Jälki-impressionismi",era:"Jälki-impressionismi",value:"Korvaamaton (200+ milj. $)",technique:"Öljy kankaalle",location:"MoMA, New York",lat:40.7614,lng:-73.9776,desc:"Pyörteinen yötaivas mielisairaalan ikkunasta. Van Goghin tunnetuin teos.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",trip:{city:"New York",flag:"🇺🇸",iata:"JFK",flightH:"9h 30min",flightPrice:"350–650",hotel:"200–400",ticket:"30",ticketNote:"MoMA — päivittäin 10:30–17:30",food:"150–250",museumUrl:"https://www.moma.org"}},
+{title:"Huuto",artist:"Edvard Munch",year:1893,yearStr:"1893",style:"Ekspressionismi",era:"Jälki-impressionismi",value:"135 milj. $ (2012)",technique:"Tempera ja värikynä pahville",location:"Munch-museo, Oslo",lat:59.9065,lng:10.7546,desc:"Ahdistuksen ikoni: hahmo kädet kasvoilla hehkuvan taivaan alla.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/800px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg",trip:{city:"Oslo",flag:"🇳🇴",iata:"OSL",flightH:"1h 20min",flightPrice:"60–150",hotel:"130–230",ticket:"18",ticketNote:"MUNCH — päivittäin 10–21",food:"120–180",museumUrl:"https://www.munchmuseet.no"}},
+{title:"Korttipelaajat",artist:"Paul Cézanne",year:1895,yearStr:"n. 1895",style:"Jälki-impressionismi",era:"Jälki-impressionismi",value:"259 milj. $ (2011)",technique:"Öljy kankaalle",location:"Musée d'Orsay, Pariisi",lat:48.86,lng:2.3266,desc:"Kaksi talonpoikaa pelaa korttia. Cézannen geometrian ja hiljaisuuden mestari.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Les_Joueurs_de_cartes%2C_par_Paul_C%C3%A9zanne%2C_Yorck.jpg/800px-Les_Joueurs_de_cartes%2C_par_Paul_C%C3%A9zanne%2C_Yorck.jpg",trip:{city:"Pariisi",flag:"🇫🇷",iata:"CDG",flightH:"3h 15min",flightPrice:"120–280",hotel:"140–250",ticket:"16",ticketNote:"Musée d'Orsay — ti–su 9:30–18",food:"100–160",museumUrl:"https://www.musee-orsay.fr"}},
+{title:"Lumpeenkukat",artist:"Claude Monet",year:1906,yearStr:"1906",style:"Impressionismi",era:"Modernismi",value:"80–100 milj. $",technique:"Öljy kankaalle",location:"Art Institute, Chicago",lat:41.8796,lng:-87.6237,desc:"Yli 250 lumpeenteosta Givernyn puutarhasta. Impressionismin huipentuma.",img:"https://upload.wikimedia.org/wikipedia/commons/a/aa/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg",trip:{city:"Chicago",flag:"🇺🇸",iata:"ORD",flightH:"10h 15min",flightPrice:"380–700",hotel:"180–350",ticket:"25–35",ticketNote:"Art Institute of Chicago",food:"140–220",museumUrl:"https://www.artic.edu"}},
+{title:"Muotokuva Adele Bloch-Bauer I",artist:"Gustav Klimt",year:1907,yearStr:"1907",style:"Jugend",era:"Modernismi",value:"137 milj. $ (2006)",technique:"Öljy ja kultalehti",location:"Neue Galerie, New York",lat:40.7813,lng:-73.961,desc:"'Kultainen Adele' — Klimtin kullattu mestariteos. Myytiin aikoinaan ennätyshintaan.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Gustav_Klimt_046.jpg/800px-Gustav_Klimt_046.jpg",trip:{city:"New York",flag:"🇺🇸",iata:"JFK",flightH:"9h 30min",flightPrice:"350–650",hotel:"200–400",ticket:"25",ticketNote:"Neue Galerie — to–ma 11–18",food:"150–250",museumUrl:"https://www.neuegalerie.org"}},
+{title:"Suudelma",artist:"Gustav Klimt",year:1908,yearStr:"1907–1908",style:"Jugend",era:"Modernismi",value:"Korvaamaton (400+ milj. $)",technique:"Öljy ja kultalehti kankaalle",location:"Belvedere, Wien",lat:48.1915,lng:16.3808,desc:"Rakastavien suudelma kullan keskellä. Art nouveaun huipentuma.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/800px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg",trip:{city:"Wien",flag:"🇦🇹",iata:"VIE",flightH:"2h 30min",flightPrice:"110–240",hotel:"110–200",ticket:"18.50",ticketNote:"Belvedere — päivittäin 10–18",food:"80–130",museumUrl:"https://www.belvedere.at"}},
+{title:"Suurkaupungin yllä",artist:"Marc Chagall",year:1918,yearStr:"1914–1918",style:"Modernismi",era:"Modernismi",value:"50+ milj. $",technique:"Öljy kankaalle",location:"Tretjakovin galleria, Moskova",lat:55.7415,lng:37.6208,desc:"Chagall ja vaimonsa lentävät kaupungin yllä. Rakkaus voittaa painovoiman.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Chagall_Over_the_town.jpg/1280px-Chagall_Over_the_town.jpg",trip:{city:"Moskova",flag:"🇷🇺",iata:"SVO",flightH:"2h 30min",flightPrice:"200–400",hotel:"80–180",ticket:"10",ticketNote:"Tretjakovin galleria",food:"50–90",museumUrl:"https://www.tretyakovgallery.ru"}},
+{title:"Amerikkalainen gootilainen",artist:"Grant Wood",year:1930,yearStr:"1930",style:"Regionalismi",era:"Modernismi",value:"100+ milj. $",technique:"Öljy pahville",location:"Art Institute, Chicago",lat:41.8796,lng:-87.6237,desc:"Vakava pariskunta ja talikko. Amerikkalaisen identiteetin monitulkintainen ikoni.",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg/800px-Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg",trip:{city:"Chicago",flag:"🇺🇸",iata:"ORD",flightH:"10h 15min",flightPrice:"380–700",hotel:"180–350",ticket:"25–35",ticketNote:"Art Institute of Chicago",food:"140–220",museumUrl:"https://www.artic.edu"}}
+];
+artworks.sort((a,b)=>a.year-b.year);
+
+const eras=[
+{name:"Renessanssi",years:"1400–1600",minY:1400,maxY:1600,bg:"radial-gradient(ellipse at 30% 50%,rgba(139,90,43,0.08),transparent 60%),#0a0a0a"},
+{name:"Barokki",years:"1600–1750",minY:1600,maxY:1750,bg:"radial-gradient(ellipse at 50% 50%,rgba(80,50,20,0.1),transparent 60%),#080808"},
+{name:"Romantiikka",years:"1780–1850",minY:1780,maxY:1850,bg:"radial-gradient(ellipse at 40% 60%,rgba(40,60,100,0.08),transparent 60%),#090909"},
+{name:"Impressionismi",years:"1860–1890",minY:1860,maxY:1890,bg:"radial-gradient(ellipse at 60% 40%,rgba(100,140,180,0.08),transparent 60%),#0a0a0a"},
+{name:"Jälki-impressionismi",years:"1885–1910",minY:1885,maxY:1910,bg:"radial-gradient(ellipse at 50% 50%,rgba(180,120,40,0.08),transparent 60%),#090909"},
+{name:"Modernismi",years:"1900–1940",minY:1900,maxY:1940,bg:"radial-gradient(ellipse at 70% 50%,rgba(200,60,60,0.06),transparent 60%),#0a0a0a"}];
+function getEra(y){for(let i=eras.length-1;i>=0;i--)if(y>=eras[i].minY)return eras[i];return eras[0]}
+
+// Timeline setup
+const tlScroll=document.getElementById('timelineScroll');
+const CARD_H=550;
+tlScroll.style.height=(artworks.length*CARD_H+window.innerHeight)+'px';
+
+const tlContainer=document.getElementById('timelineCards');
+artworks.forEach((art,i)=>{
+  const c=document.createElement('div');c.className='tl-card';c.dataset.index=i;
+  c.innerHTML=`<div class="tl-card-img"><img src="${art.img}" alt="${art.title}" loading="lazy" onerror="this.onerror=null;this.parentElement.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a1a1a;color:#c9a84c;font-family:serif;font-size:1rem;text-align:center;padding:1rem\\'>🎨<br>${art.title}</div>'"></div>
+  <div class="tl-card-info"><div class="tl-year">${art.yearStr}</div><h3>${art.title}</h3><p class="tl-artist">${art.artist}</p><span class="tl-style-badge">${art.style}</span><p class="tl-desc">${art.desc}</p><p class="tl-location"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>${art.location}</p><p class="tl-click-hint">▸ Klikkaa nähdäksesi lisää</p></div>`;
+  c.addEventListener('click',()=>openModal(art));
+  tlContainer.appendChild(c);
+});
+
+const tlCards=document.querySelectorAll('.tl-card');
+function updateTimeline(){
+  const rect=tlScroll.getBoundingClientRect();
+  const scrolled=-rect.top;
+  const totalH=tlScroll.offsetHeight-window.innerHeight;
+  const progress=Math.max(0,Math.min(1,scrolled/totalH));
+  const idx=Math.max(0,Math.min(artworks.length-1,Math.floor(scrolled/CARD_H)));
+  const art=artworks[idx];const era=getEra(art.year);
+  const minY=artworks[0].year,maxY=artworks[artworks.length-1].year;
+  const curY=Math.round(minY+(maxY-minY)*progress);
+  document.getElementById('timelineYearBg').textContent=curY;
+  document.getElementById('progressYear').textContent=curY;
+  document.getElementById('progressFill').style.width=(progress*100)+'%';
+  document.getElementById('eraLabel').textContent=era.name;
+  document.getElementById('eraYears').textContent=era.years;
+  document.getElementById('timelineBg').style.background=era.bg;
+  document.getElementById('tcNum').textContent=`${idx+1} / ${artworks.length}`;
+  tlCards.forEach((c,i)=>{if(i===idx){c.classList.add('visible');c.classList.remove('exit-up')}else if(i<idx){c.classList.remove('visible');c.classList.add('exit-up')}else{c.classList.remove('visible','exit-up')}});
+}
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>100);
+  const r=tlScroll.getBoundingClientRect();
+  if(r.top<window.innerHeight&&r.bottom>0)updateTimeline();
+},{passive:true});
+
+// Modal
+const overlay=document.getElementById('modalOverlay');
+let currentTrip=null,currentArt=null;
+function openModal(art){
+  const img=document.getElementById('modalImg');img.src=art.img;img.alt=art.title;
+  img.onerror=function(){this.onerror=null;this.src='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="400"><rect fill="#1a1a1a" width="300" height="400"/><text x="150" y="200" text-anchor="middle" fill="#c9a84c" font-family="serif" font-size="18">🎨</text></svg>')};
+  document.getElementById('modalTitle').textContent=art.title;
+  document.getElementById('modalArtist').textContent=art.artist;
+  document.getElementById('modalYear').textContent=art.yearStr;
+  document.getElementById('modalStyle').textContent=art.style;
+  document.getElementById('modalValue').textContent=art.value;
+  document.getElementById('modalTechnique').textContent=art.technique;
+  document.getElementById('modalDesc').textContent=art.desc;
+  document.getElementById('modalLocation').textContent=art.location;
+  document.getElementById('modalMap').src=`https://www.openstreetmap.org/export/embed.html?bbox=${art.lng-0.01}%2C${art.lat-0.008}%2C${art.lng+0.01}%2C${art.lat+0.008}&layer=mapnik&marker=${art.lat}%2C${art.lng}`;
+  document.getElementById('tripPanel').classList.remove('open');
+  document.getElementById('tripBtn').innerHTML='<svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg> Haluan nähdä tämän teoksen livenä!';
+  currentTrip=art.trip;currentArt=art;
+  overlay.classList.add('open');document.body.style.overflow='hidden';
+}
+function closeModal(){overlay.classList.remove('open');document.body.style.overflow=''}
+document.getElementById('modalClose').addEventListener('click',closeModal);
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))closeModal()});
+
+function toggleTrip(){
+  const p=document.getElementById('tripPanel'),b=document.getElementById('tripBtn');
+  if(p.classList.contains('open')){p.classList.remove('open');b.innerHTML='<svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg> Haluan nähdä tämän teoksen livenä!';return}
+  const t=currentTrip,a=currentArt;
+  document.getElementById('tripDest').textContent=t.city;document.getElementById('tripFlag').textContent=t.flag;
+  document.getElementById('tripFlightTime').textContent=`Lentoaika: ${t.flightH}`;
+  document.getElementById('tripFlight').textContent=`${t.flightPrice} €`;document.getElementById('tripAirport').textContent=`HEL → ${t.iata}`;
+  document.getElementById('tripHotel').textContent=`${t.hotel} €`;document.getElementById('tripHotelNote').textContent=`Hotelli, ${t.city}`;
+  document.getElementById('tripTicket').textContent=`${t.ticket} €`;document.getElementById('tripMuseum').textContent=t.ticketNote;
+  document.getElementById('tripFood').textContent=`${t.food} €`;
+  const fP=t.flightPrice.split('–').map(Number),hP=t.hotel.split('–').map(Number),tP=String(t.ticket).split('–').map(Number),fdP=t.food.split('–').map(Number);
+  document.getElementById('tripTotal').textContent=`${fP[0]+hP[0]+tP[0]+fdP[0]}–${(fP[1]||fP[0])+(hP[1]||hP[0])+(tP[1]||tP[0])+(fdP[1]||fdP[0])} €`;
+  const d=new Date();d.setDate(d.getDate()+30);const d2=new Date(d);d2.setDate(d2.getDate()+2);
+  const df=d.toISOString().split('T')[0],dt=d2.toISOString().split('T')[0];
+  document.getElementById('tripFlightLink').href=`https://www.google.com/travel/flights?q=flights+from+Helsinki+to+${encodeURIComponent(t.city)}+${df}`;
+  document.getElementById('tripHotelLink').href=`https://www.booking.com/searchresults.html?ss=${encodeURIComponent(t.city)}&checkin=${df}&checkout=${dt}`;
+  document.getElementById('tripMuseumLink').href=t.museumUrl;
+  document.getElementById('tripMapLink').href=`https://www.google.com/maps/dir/Helsinki+Airport/${encodeURIComponent(a.location)}`;
+  p.classList.add('open');
+  b.innerHTML='<svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> Sulje matkasuunnitelma';
+  setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+// 3D Gallery
+let scene3d,camera3d,renderer3d,gallery3dActive=false;
+const keys={w:false,a:false,s:false,d:false};
+let yaw=0,pitch=0;
+function start3DGallery(){
+  document.getElementById('gallery3dEnter').classList.add('hidden');
+  if(scene3d){gallery3dActive=true;return}
+  const canvas=document.getElementById('gallery3d-canvas');
+  const wrap=document.getElementById('gallery3dWrap');
+  const W=wrap.clientWidth,H=wrap.clientHeight;
+  scene3d=new THREE.Scene();scene3d.background=new THREE.Color(0x0a0a0a);scene3d.fog=new THREE.Fog(0x0a0a0a,1,55);
+  camera3d=new THREE.PerspectiveCamera(65,W/H,0.1,100);camera3d.position.set(0,1.6,0);
+  renderer3d=new THREE.WebGLRenderer({canvas,antialias:true});renderer3d.setSize(W,H);renderer3d.setPixelRatio(Math.min(devicePixelRatio,2));
+  scene3d.add(new THREE.AmbientLight(0xfff5e6,0.12));
+  const rW=8,rH=4,hLen=artworks.length*1.8+10;
+  const flr=new THREE.Mesh(new THREE.PlaneGeometry(rW,hLen),new THREE.MeshStandardMaterial({color:0x1a1410,roughness:0.9}));
+  flr.rotation.x=-Math.PI/2;flr.position.set(0,0,-hLen/2+5);flr.receiveShadow=true;scene3d.add(flr);
+  const ceil=new THREE.Mesh(new THREE.PlaneGeometry(rW,hLen),new THREE.MeshStandardMaterial({color:0x1a1a1a,roughness:0.95}));
+  ceil.rotation.x=Math.PI/2;ceil.position.set(0,rH,-hLen/2+5);scene3d.add(ceil);
+  const wM=new THREE.MeshStandardMaterial({color:0x1e1a15,roughness:0.85});
+  const lwG=new THREE.PlaneGeometry(hLen,rH);
+  const lw=new THREE.Mesh(lwG,wM);lw.position.set(-rW/2,rH/2,-hLen/2+5);lw.rotation.y=Math.PI/2;scene3d.add(lw);
+  const rw=new THREE.Mesh(lwG,wM.clone());rw.position.set(rW/2,rH/2,-hLen/2+5);rw.rotation.y=-Math.PI/2;scene3d.add(rw);
+  const bG=new THREE.PlaneGeometry(rW,rH);
+  scene3d.add(Object.assign(new THREE.Mesh(bG,wM.clone()),{position:new THREE.Vector3(0,rH/2,-hLen+5)}));
+  const fw=new THREE.Mesh(bG,wM.clone());fw.position.set(0,rH/2,5);fw.rotation.y=Math.PI;scene3d.add(fw);
+  const loader=new THREE.TextureLoader();
+  artworks.forEach((art,i)=>{
+    const side=i%2===0?-1:1;const z=-i*1.8;const x=side*(rW/2-0.05);
+    const sl=new THREE.SpotLight(0xfff0d0,0.7,7,Math.PI/6,0.5);
+    sl.position.set(side*(rW/2-1),rH-0.3,z);sl.target.position.set(x,1.8,z);
+    scene3d.add(sl);scene3d.add(sl.target);
+    const fW=1.4,fH=1.0;
+    const fr=new THREE.Mesh(new THREE.BoxGeometry(0.07,fH+0.08,fW+0.08),new THREE.MeshStandardMaterial({color:0x8a6d2b,roughness:0.4,metalness:0.3}));
+    fr.position.set(x-(side*0.04),1.8,z);scene3d.add(fr);
+    const pM=new THREE.MeshStandardMaterial({color:0x888,roughness:0.8});
+    const pm=new THREE.Mesh(new THREE.PlaneGeometry(fW,fH),pM);
+    pm.position.set(x-(side*0.07),1.8,z);pm.rotation.y=side===1?-Math.PI/2:Math.PI/2;scene3d.add(pm);
+    loader.load(art.img,t=>{t.minFilter=THREE.LinearFilter;pM.map=t;pM.color.set(0xffffff);pM.needsUpdate=true});
+    const pc=document.createElement('canvas');pc.width=256;pc.height=40;const cx=pc.getContext('2d');
+    cx.fillStyle='#1a1410';cx.fillRect(0,0,256,40);cx.fillStyle='#c9a84c';cx.font='bold 12px serif';cx.textAlign='center';
+    cx.fillText(art.title,128,16);cx.font='italic 10px serif';cx.fillStyle='#bdb5a7';cx.fillText(art.artist,128,32);
+    const pt=new THREE.Mesh(new THREE.PlaneGeometry(0.5,0.1),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(pc)}));
+    pt.position.set(x-(side*0.07),1.12,z);pt.rotation.y=side===1?-Math.PI/2:Math.PI/2;scene3d.add(pt);
+  });
+  for(let i=0;i<hLen/3.5;i++){const pl=new THREE.PointLight(0xfff5e6,0.25,5);pl.position.set(0,rH-0.1,-i*3.5+3);scene3d.add(pl)}
+  gallery3dActive=true;
+  canvas.addEventListener('click',()=>{if(!document.pointerLockElement)canvas.requestPointerLock()});
+  document.addEventListener('pointerlockchange',()=>{gallery3dActive=!!document.pointerLockElement});
+  document.addEventListener('mousemove',e=>{if(!document.pointerLockElement)return;yaw-=e.movementX*0.002;pitch=Math.max(-1.2,Math.min(1.2,pitch-e.movementY*0.002))});
+  window.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(keys.hasOwnProperty(k))keys[k]=true});
+  window.addEventListener('keyup',e=>{const k=e.key.toLowerCase();if(keys.hasOwnProperty(k))keys[k]=false});
+  (function anim(){
+    requestAnimationFrame(anim);
+    if(gallery3dActive){
+      const sp=0.06,d=new THREE.Vector3;
+      if(keys.w)d.z-=1;if(keys.s)d.z+=1;if(keys.a)d.x-=1;if(keys.d)d.x+=1;
+      if(d.length()>0)d.normalize().multiplyScalar(sp);d.applyAxisAngle(new THREE.Vector3(0,1,0),yaw);
+      const nx=camera3d.position.x+d.x,nz=camera3d.position.z+d.z;
+      if(Math.abs(nx)<rW/2-0.4)camera3d.position.x=nx;
+      if(nz<4.5&&nz>-hLen+6)camera3d.position.z=nz;
+      camera3d.rotation.order='YXZ';camera3d.rotation.y=yaw;camera3d.rotation.x=pitch;
+    }
+    renderer3d.render(scene3d,camera3d);
+  })();
+  window.addEventListener('resize',()=>{const w2=wrap.clientWidth,h2=wrap.clientHeight;camera3d.aspect=w2/h2;camera3d.updateProjectionMatrix();renderer3d.setSize(w2,h2)});
+}
+</script>
+</body>
+</html>
